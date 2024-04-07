@@ -1,1 +1,1 @@
-from lib import *
+from PINN  import *
