@@ -1,1 +1,1 @@
-from PINN  import *
+from pinn  import *
