@@ -6,9 +6,9 @@ This library is for fluid simulation.
 The following physics equations are implemented.
 
 - [x] Laplace equation 
-- [] 2D Navier Stokes equation
-- [] 1D diffusion equation
-- [] 2D diffusion equation
+- [x] 2D Navier Stokes equation (steady 2D cavity flow)
+- [ ] 1D diffusion equation
+- [ ] 2D diffusion equation
 
 
 ## Installation
