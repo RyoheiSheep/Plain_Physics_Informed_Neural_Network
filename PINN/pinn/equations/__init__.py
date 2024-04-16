@@ -1,0 +1,2 @@
+from .laplace_equation import laplace_equation_2D
+from .navier_stokes_equation_steady_2D import navier_stokes_equation_steady_2D
