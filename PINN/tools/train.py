@@ -20,7 +20,7 @@ from pinn.net import PINN_2D
 
 def parse_arguments():
     parser=argparse.ArgumentParser(description="Train PINN with specified parameters and config")
-    parser.add_argument("--experiment_file", type=str,default="experiment.py",help="Path to config python file")
+    parser.add_argument("--exp_file", type=str,default="experiment.py",help="Path to config python file")
     return parser.parse_args()
 
 
