@@ -14,3 +14,7 @@ class Exp(MyExp):
         
         self.lambda_bd=5.0
         self.lambda_res=2.0
+
+if __name__=="__main__":
+    exp=Exp()
+    print(exp.name)

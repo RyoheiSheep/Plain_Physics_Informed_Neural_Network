@@ -1,6 +1,7 @@
 
 from datetime import datetime
 import argparse
+import os
 import random
 import warnings
 from loguru import logger
@@ -36,15 +37,17 @@ def main(exp:Exp,args):
     
     device=torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model=exp.get_model().to(device)
-    train_data=exp.get_dataset()
     optimizer=optim.LBFGS(model.parameters(),line_search_fn="strong_wolfe")
 
     mse_metrics=nn.MSELoss()
 
+
+    output_dir=os.path.join(exp.output_dir,exp.exp_name)
+    os.makedirs(output_dir,exist_ok=True)
+    
     log_dir="logs/"+datetime.now().strftime("%Y%m%d-%H%M%S")
+    log_dir=os.path.join(output_dir,log_dir)
     writer=SummaryWriter(log_dir)
-
-
 
     data=exp.get_dataset()
     bd_data=data["boundary_data"]
@@ -73,14 +76,27 @@ def main(exp:Exp,args):
         total_loss=exp.lambda_bd*bd_loss+exp.lambda_res*res_loss
         total_loss.backward()
         return total_loss
-
+    
+    best_loss=1e10
+    best_epoch=0
+    
     for epoch in range(exp.max_epoch):
         loss=optimizer.step(partial(closure,input_bd_train,output_bd_train,input_res_train))
         writer.add_scalar("Loss/train",loss.item(),epoch)
 
         logger.info(f"Epoch {epoch}:Loss: {loss.item()}")
+
+    
+        if loss.item()<best_loss:
+            best_loss=loss.item()
+            best_epoch=epoch
+            torch.save(model.state_dict(),os.path.join(log_dir,"best_model_lbfgs.pth"))
+
+    torch.save(model.state_dict(),os.path.join(log_dir,"last_model_lbfgs.pth"))
+    
+
 if __name__=="__main__":
    args=parse_arguments()
-   exp=get_exp_by_file(args.experiment_file)
+   exp=get_exp_by_file(args.exp_file)
    main(exp,args)
 
