@@ -51,11 +51,11 @@ class Exp(BaseExp):
         return self.model
 
     def get_dataset(self):
-        from pinn.common import boundary_conditions, physics_informed_conditions
+        from pinn.common import boundary_conditions, physics_informed_conditions,inference_conditions
 
         if self.data_name=="steady_cavity_2D":
             self.boundary_data=boundary_conditions.steady_2D_cavity(self.nx,self.ny)
             self.physics_informed_data=physics_informed_conditions.steady_2D_cavity(self.nx,self.ny)
-
-        return {"boundary_data":self.boundary_data,"physics_informed_condition":self.physics_informed_data}
+            self.inference_data=inference_conditions.steady_2D_cavity(self.nx,self.ny)
+        return {"boundary_data":self.boundary_data,"physics_informed_condition":self.physics_informed_data,"inference_data":self.inference_data}
 
