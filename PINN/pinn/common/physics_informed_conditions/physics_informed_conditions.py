@@ -21,8 +21,6 @@ def steady_2D_cavity(nx,ny):
     y=y[1:-1]
     xx,yy=np.meshgrid(x,y)
 
-    # Flatten meshgrid to get corrdinates grid
-    coordinates=np.column_stack((xx.ravel(),yy.ravel()))
 
     return {"coordinates":(xx.ravel(),yy.ravel())}
 
@@ -32,6 +30,7 @@ if __name__=="__main__":
     ny=10
     sparcing=0.1
 
-    coordinates=steady_2D_cavity(nx,ny,sparcing)
-    print(f"Coordinates grid shape: {coordinates.shape}")
-    print(f"Sample coordinates data: \n {coordinates}")
+    coordinates=steady_2D_cavity(nx,ny)
+    coordinates=coordinates["coordinates"]
+    print(coordinates[0].shape)
+    # print(f"Sample coordinates data: \n {coordinates}")
