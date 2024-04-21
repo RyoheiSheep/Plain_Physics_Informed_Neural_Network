@@ -54,8 +54,6 @@ def steady_2D_cavity(nx,ny):
 
 
 if __name__=="__main__":
-    x_boundary,y_boundary,u_boundary,v_boundary=steady_2D_cavity(10,10)
-    print(x_boundary.dtype)
-    print(y_boundary)
-    print(u_boundary)
-
+    boundary_data=steady_2D_cavity(10,10)
+    x_boundary=boundary_data["coordinates"][0]
+    print(x_boundary.shape)
