@@ -6,8 +6,10 @@ import torch
 
 import matplotlib.pyplot as plt
 
-from pinn.exp import Exp,get_by_file
+from pinn.exp import Exp,get_exp_by_file
 from pinn.net import PINN_2D
+
+import argparse
 
 def parse_arguments():
     parser=argparse.ArgumentParser(description="Train PINN with specified parameters and config")
@@ -33,23 +35,30 @@ def main(exp:Exp,args):
 
 
     data=exp.get_dataset()
-    bd_data=data["boundary_data"]
-    res_data=data["physics_informed_condition"]
-    x_bd=bd_data["coordinates"][0]
-    y_bd=bd_data["coordinates"][1]
-    u_bd=bd_data["velocity"][0] 
-    v_bd=bd_data["velocity"][1] 
-    input_bd_train=np.column_stack([x_bd,y_bd])
-    input_bd_train=torch.from_numpy(input_bd_train).float().to(device)
-    output_bd_train=np.column_stack([u_bd,v_bd])
-    output_bd_train=torch.from_numpy(output_bd_train).float().to(device)
+    domain_data=data["inference_data"]
+    x=domain_data["coordinates"][0]
+    y=domain_data["coordinates"][1]
+    input_data=np.column_stack([x,y])
+    input_data=torch.from_numpy(input_data).float().to(device)
     
-    x_res=res_data["coordinates"][0]
-    y_res=res_data["coordinates"][1]
-    input_res_train=np.column_stack([x_res,y_res])
-    input_res_train=torch.from_numpy(input_res_train).float().to(device)
-
     with torch.no_grad():
-        output=model(input_res_train)
+        output=model(input_data)
+    output=output.detach().numpy()
 
-    
+    X=x.reshape((exp.nx,exp.ny))
+    Y=y.reshape((exp.nx,exp.ny))
+    U=output.T[0].reshape((exp.nx,exp.ny))
+    V=output.T[1].reshape((exp.nx,exp.ny))
+
+    fig,ax=plt.subplots(figsize=(7,7))
+   
+    print(X.shape)
+    # ax.quiver(X[::10,::10],Y[::10,::10],U[::10,::10],V[::10,::10])
+    ax.quiver(X,Y,U,V)
+    ax.set_title("Velocity Field")
+    plt.show()
+
+if __name__=="__main__":
+    args=parse_arguments()
+    exp=get_exp_by_file(args.exp_file)
+    main(exp,args)
